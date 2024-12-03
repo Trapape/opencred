@@ -4,18 +4,42 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 steps:
-  - name: 'gcr.io/cloud-builders/docker'
-    args: [ 'build',
-          '--build-arg',
-          'NODE_AUTH_TOKEN=${_NODE_AUTH_TOKEN}',
-          '-t',
-          '$TAG_NAME',
-          '.' ]
+  # Paso 1: Extraer secretos de Secret Manager
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |-
+        echo "Obteniendo secretos de Secret Manager..."
+        export NODE_AUTH_TOKEN=$(gcloud secrets versions access latest --secret=NODE_AUTH_TOKEN)
+        export TAG_NAME=$(gcloud secrets versions access latest --secret=TAG_NAME) # Asegúrate de que TAG_NAME esté configurado en Secret Manager
+        export KMS_KEYRING=$(gcloud secrets versions access latest --secret=KMS_KEYRING)
+        export KMS_LOCATION=$(gcloud secrets versions access latest --secret=KMS_LOCATION)
+        export VULNZ_ATTESTOR=$(gcloud secrets versions access latest --secret=VULNZ_ATTESTOR)
+        export VULNZ_KMS_KEY=$(gcloud secrets versions access latest --secret=VULNZ_KMS_KEY)
+        export VULNZ_KMS_KEY_VERSION=$(gcloud secrets versions access latest --secret=VULNZ_KMS_KEY_VERSION)
 
+  # Paso 2: Construir la imagen Docker
+  - name: 'gcr.io/cloud-builders/docker'
+    id: 'Build Docker Image'
+    args: [
+      'build',
+      '--build-arg',
+      'NODE_AUTH_TOKEN=$NODE_AUTH_TOKEN',
+      '-t',
+      '$TAG_NAME',
+      '.'
+    ]
+
+  # Paso 3: Empujar la imagen Docker al repositorio
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Push Docker Image to Repository'
-    args: [ 'push', '$TAG_NAME']
+    args: [
+      'push',
+      '$TAG_NAME'
+    ]
 
+  # Paso 4: Atacar la imagen con Binary Authorization
   - name: 'gcr.io/$PROJECT_ID/cloudbuild-attestor'
     id: 'Attest Image (Binary Auth)'
     entrypoint: 'sh'
@@ -25,12 +49,16 @@ steps:
       - |-
         FQ_DIGEST=$(gcloud container images describe --format 'value(image_summary.fully_qualified_digest)' $TAG_NAME)
         /scripts/create_attestation.sh \
-        -p "$PROJECT_ID" \
-        -i "$${FQ_DIGEST}" \
-        -a "$_VULNZ_ATTESTOR" \
-        -v "$_VULNZ_KMS_KEY_VERSION" \
-        -k "$_VULNZ_KMS_KEY" \
-        -l "$_KMS_LOCATION" \
-        -r "$_KMS_KEYRING" \
+          -p "$PROJECT_ID" \
+          -i "$${FQ_DIGEST}" \
+          -a "$VULNZ_ATTESTOR" \
+          -v "$VULNZ_KMS_KEY_VERSION" \
+          -k "$VULNZ_KMS_KEY" \
+          -l "$KMS_LOCATION" \
+          -r "$KMS_KEYRING"
+
+# Imágenes generadas
+images:
+  - '$TAG_NAME'
 options:
   logging: CLOUD_LOGGING_ONLY
