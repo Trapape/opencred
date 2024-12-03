@@ -32,3 +32,5 @@ steps:
         -k "$_VULNZ_KMS_KEY" \
         -l "$_KMS_LOCATION" \
         -r "$_KMS_KEYRING" \
+options:
+  logging: CLOUD_LOGGING_ONLY
