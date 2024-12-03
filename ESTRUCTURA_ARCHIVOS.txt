@@ -1,0 +1,155 @@
+Listado de rutas de carpetas para el volumen hj
+El número de serie del volumen es AEBE-1E9E
+D:.
+¦   .dockerignore
+¦   .editorconfig
+¦   .eslintrc.cjs
+¦   .gitignore
+¦   .nvmrc
+¦   archivo.txt
+¦   CHANGELOG.md
+¦   cloudbuild.yaml
+¦   dev.js
+¦   Dockerfile
+¦   LICENSE
+¦   package.json
+¦   README.md
+¦   tailwind.config.js
+¦   test.config.js
+¦   test.js
+¦   
++---.github
+¦   +---workflows
+¦           lint.yaml
+¦           packaging.yaml
+¦           sca.yaml
+¦           
++---.reuse
+¦       dep5
+¦       
++---common
+¦       audit.js
+¦       documentLoader.js
+¦       generatePrime256v1Key.js
+¦       generateRSA256Key.js
+¦       jwt.js
+¦       suites.js
+¦       utils.js
+¦       x509.js
+¦       zcap.js
+¦       
++---configs
+¦       authorization.js
+¦       combined.example.yaml
+¦       combined.schema.json
+¦       combined.yaml
+¦       config.js
+¦       configUtils.js
+¦       core.js
+¦       database.js
+¦       express.js
+¦       https-agent.js
+¦       paths.js
+¦       server.js
+¦       translation.js
+¦       
++---docs
+¦       00-configure-relying-party.md
+¦       01-how-to-use-api.md
+¦       02-how-to-use-oidc.md
+¦       OpenCred_Logo.png
+¦       
++---lib
+¦   ¦   api.js
+¦   ¦   audit.js
+¦   ¦   auth.js
+¦   ¦   callback.js
+¦   ¦   database.js
+¦   ¦   didWeb.js
+¦   ¦   http.js
+¦   ¦   index.js
+¦   ¦   logger.js
+¦   ¦   oidc.js
+¦   ¦   resolveClient.js
+¦   ¦   
+¦   +---workflows
+¦           base.js
+¦           common.js
+¦           entra-verified-id-workflow.js
+¦           native-workflow.js
+¦           vc-api-workflow.js
+¦           
++---LICENSES
+¦       BSD-3-Clause.txt
+¦       
++---test
+¦   ¦   .eslintrc.cjs
+¦   ¦   mock-data.js
+¦   ¦   
+¦   +---fixtures
+¦   ¦   ¦   architecture.png
+¦   ¦   ¦   entra-exchange.json
+¦   ¦   ¦   exchange.json
+¦   ¦   ¦   expired.badssl.com.cer
+¦   ¦   ¦   oid4vp_di.json
+¦   ¦   ¦   oid4vp_jwt.json
+¦   ¦   ¦   signingKeys.js
+¦   ¦   ¦   submission.json
+¦   ¦   ¦   vc_jwt.json
+¦   ¦   ¦   
+¦   ¦   +---audit
+¦   ¦   ¦       vpTokenExample.json
+¦   ¦   ¦       
+¦   ¦   +---revoked-cert
+¦   ¦           intermediate.cer
+¦   ¦           leaf.cer
+¦   ¦           root.cer
+¦   ¦           
+¦   +---load
+¦   ¦       artillery.yaml
+¦   ¦       presentation.cjs
+¦   ¦       
+¦   +---mocha
+¦   ¦       10-api.test.js
+¦   ¦       100-vc-jwt.test.js
+¦   ¦       110-x509.test.js
+¦   ¦       120-audit.test.js
+¦   ¦       20-config.test.js
+¦   ¦       30-didWeb.test.js
+¦   ¦       40-documentLoader.test.js
+¦   ¦       50-exchanges.native.test.js
+¦   ¦       60-keygen.test.js
+¦   ¦       70-oauth.test.js
+¦   ¦       80-translations.test.js
+¦   ¦       90-utils.test.js
+¦   ¦       
+¦   +---utils
+¦           auditVpToken.js
+¦           credentials.js
+¦           dids.js
+¦           diVpTokens.js
+¦           jwtVpTokens.js
+¦           x509.js
+¦           
++---web
+    ¦   App.vue
+    ¦   chapi.js
+    ¦   index.js
+    ¦   manifest.json
+    ¦   styles.pcss
+    ¦   
+    +---components
+            AuditPresentation.vue
+            CHAPIView.vue
+            ErrorView.vue
+            ExchangeLayout.vue
+            JsonNode.vue
+            JsonView.vue
+            LoginView.vue
+            OID4VPView.vue
+            ReCaptcha.vue
+            TestPage.vue
+            TranslateIcon.vue
+            VerificationView.vue
+            YouTubeVideo.vue
+            
