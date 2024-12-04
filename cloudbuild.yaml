@@ -4,6 +4,18 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 steps:
+# Paso 1: Construir la imagen Docker
+  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |-
+        echo "Obteniendo secretos desde Secret Manager..."
+        TAG_NAME=$(gcloud secrets versions access latest --secret=TAG_NAME | tr '[:upper:]' '[:lower:]')
+        echo "TAG_NAME obtenido: $TAG_NAME"
+        NODE_AUTH_TOKEN=$(gcloud secrets versions access latest --secret=NODE_AUTH_TOKEN)
+        docker build --build-arg NODE_AUTH_TOKEN=$NODE_AUTH_TOKEN -t $TAG_NAME .
+        
   # Paso 1: Construir la imagen Docker
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Build Docker Image'
