@@ -4,42 +4,27 @@
 # SPDX-License-Identifier: BSD-3-Clause
 
 steps:
-  # Paso 1: Extraer secretos de Secret Manager
-  - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-    entrypoint: 'bash'
-    args:
-      - '-c'
-      - |-
-        echo "Obteniendo secretos de Secret Manager..."
-        export NODE_AUTH_TOKEN=$(gcloud secrets versions access latest --secret=NODE_AUTH_TOKEN)
-        export TAG_NAME=$(gcloud secrets versions access latest --secret=TAG_NAME) # Asegúrate de que TAG_NAME esté configurado en Secret Manager
-        export KMS_KEYRING=$(gcloud secrets versions access latest --secret=KMS_KEYRING)
-        export KMS_LOCATION=$(gcloud secrets versions access latest --secret=KMS_LOCATION)
-        export VULNZ_ATTESTOR=$(gcloud secrets versions access latest --secret=VULNZ_ATTESTOR)
-        export VULNZ_KMS_KEY=$(gcloud secrets versions access latest --secret=VULNZ_KMS_KEY)
-        export VULNZ_KMS_KEY_VERSION=$(gcloud secrets versions access latest --secret=VULNZ_KMS_KEY_VERSION)
-
-  # Paso 2: Construir la imagen Docker
+  # Paso 1: Construir la imagen Docker
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Build Docker Image'
     args: [
       'build',
       '--build-arg',
-      'NODE_AUTH_TOKEN=$NODE_AUTH_TOKEN',
+      'NODE_AUTH_TOKEN=$(gcloud secrets versions access latest --secret=NODE_AUTH_TOKEN)',
       '-t',
-      '$TAG_NAME',
+      '$(gcloud secrets versions access latest --secret=TAG_NAME)',
       '.'
     ]
 
-  # Paso 3: Empujar la imagen Docker al repositorio
+  # Paso 2: Empujar la imagen Docker al repositorio
   - name: 'gcr.io/cloud-builders/docker'
     id: 'Push Docker Image to Repository'
     args: [
       'push',
-      '$TAG_NAME'
+      '$(gcloud secrets versions access latest --secret=TAG_NAME)'
     ]
 
-  # Paso 4: Atacar la imagen con Binary Authorization
+  # Paso 3: Atacar la imagen con Binary Authorization
   - name: 'gcr.io/$PROJECT_ID/cloudbuild-attestor'
     id: 'Attest Image (Binary Auth)'
     entrypoint: 'sh'
@@ -47,18 +32,14 @@ steps:
       - -xe
       - -c
       - |-
-        FQ_DIGEST=$(gcloud container images describe --format 'value(image_summary.fully_qualified_digest)' $TAG_NAME)
+        FQ_DIGEST=$(gcloud container images describe --format 'value(image_summary.fully_qualified_digest)' $(gcloud secrets versions access latest --secret=TAG_NAME))
         /scripts/create_attestation.sh \
           -p "$PROJECT_ID" \
           -i "$${FQ_DIGEST}" \
-          -a "$VULNZ_ATTESTOR" \
-          -v "$VULNZ_KMS_KEY_VERSION" \
-          -k "$VULNZ_KMS_KEY" \
-          -l "$KMS_LOCATION" \
-          -r "$KMS_KEYRING"
-
-# Imágenes generadas
-images:
-  - '$TAG_NAME'
+          -a "$(gcloud secrets versions access latest --secret=VULNZ_ATTESTOR)" \
+          -v "$(gcloud secrets versions access latest --secret=VULNZ_KMS_KEY_VERSION)" \
+          -k "$(gcloud secrets versions access latest --secret=VULNZ_KMS_KEY)" \
+          -l "$(gcloud secrets versions access latest --secret=KMS_LOCATION)" \
+          -r "$(gcloud secrets versions access latest --secret=KMS_KEYRING)"
 options:
   logging: CLOUD_LOGGING_ONLY
