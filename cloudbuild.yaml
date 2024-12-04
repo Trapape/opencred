@@ -12,7 +12,7 @@ steps:
       '--build-arg',
       'NODE_AUTH_TOKEN=$(secrets.NODE_AUTH_TOKEN)',
       '-t',
-      '$(secrets.TAG_NAME)',
+      'gcr.io/tantan-gc/opencred:latest',
       '.'
     ]
 
@@ -21,25 +21,25 @@ steps:
     id: 'Push Docker Image to Repository'
     args: [
       'push',
-      '$(gcloud secrets versions access latest --secret=TAG_NAME)'
+      'gcr.io/tantan-gc/opencred:latest'
     ]
 
   # Paso 3: Atacar la imagen con Binary Authorization
-  - name: 'gcr.io/$PROJECT_ID/cloudbuild-attestor'
+  - name: 'gcr.io/tantan-gc/cloudbuild-attestor'
     id: 'Attest Image (Binary Auth)'
     entrypoint: 'sh'
     args:
       - -xe
       - -c
       - |-
-        FQ_DIGEST=$(gcloud container images describe --format 'value(image_summary.fully_qualified_digest)' $(gcloud secrets versions access latest --secret=TAG_NAME))
+        FQ_DIGEST=$(gcloud container images describe --format 'value(image_summary.fully_qualified_digest)' gcr.io/tantan-gc/opencred:latest)
         /scripts/create_attestation.sh \
-          -p "$PROJECT_ID" \
+          -p "tatan-gc" \
           -i "$${FQ_DIGEST}" \
-          -a "$(gcloud secrets versions access latest --secret=VULNZ_ATTESTOR)" \
-          -v "$(gcloud secrets versions access latest --secret=VULNZ_KMS_KEY_VERSION)" \
-          -k "$(gcloud secrets versions access latest --secret=VULNZ_KMS_KEY)" \
-          -l "$(gcloud secrets versions access latest --secret=KMS_LOCATION)" \
-          -r "$(gcloud secrets versions access latest --secret=KMS_KEYRING)"
+          -a "$(secrets.VULNZ_ATTESTOR)" \
+          -v "$(secrets.VULNZ_KMS_KEY_VERSION)" \
+          -k "$(secrets.VULNZ_KMS_KEY)" \
+          -l "$(secrets.KMS_LOCATION)" \
+          -r "$(secrets.KMS_KEYRING)"
 options:
   logging: CLOUD_LOGGING_ONLY
