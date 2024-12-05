@@ -5,23 +5,23 @@
 
 steps:
   # Paso 1: Construir la imagen Docker
-  - name: 'gcr.io/cloud-builders/docker'
+  - name: 'https://us-central1-docker.pkg.dev/tantan-vc-np/tantan-vc-np/'
     id: 'Build Docker Image'
     args: [
       'build',
       '--build-arg',
       'NODE_AUTH_TOKEN=$(secrets.NODE_AUTH_TOKEN)',
       '-t',
-      'gcr.io/tantan-vp-np/opencred:latest',
+      'docker.pkg.dev/tantan-vp-np/tantan-vc-np/opencred:latest',
       '.'
     ]
 
   # Paso 2: Empujar la imagen Docker al repositorio
-  - name: 'gcr.io/cloud-builders/docker'
+  - name: 'https://us-central1-docker.pkg.dev/tantan-vc-np/tantan-vc-np/'
     id: 'Push Docker Image to Repository'
     args: [
       'push',
-      'gcr.io/tantan-vp-np/opencred:latest'
+      'docker.pkg.dev/tantan-vp-np/tantan-vc-np/opencred:latest'
     ]
 
   # Paso 3: Atacar la imagen con Binary Authorization
