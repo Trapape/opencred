@@ -5,7 +5,7 @@
 
 steps:
   # Paso 1: Construir la imagen Docker
-  - name: 'Construir la imagen Docker'
+  - name: 'gcr.io/cloud-builders/docker'
     id: 'Build Docker Image'
     args: [
       'build',
