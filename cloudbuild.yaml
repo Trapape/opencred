@@ -12,7 +12,7 @@ steps:
       '--build-arg',
       'NODE_AUTH_TOKEN=$(secrets.NODE_AUTH_TOKEN)',
       '-t',
-      'docker.pkg.dev/tantan-vp-np/tantan-vc-np/opencred:latest',
+      'gcr.us-central1/tantan-vp-np/tantan-vc-np/opencred:latest',
       '.'
     ]
 
@@ -21,7 +21,7 @@ steps:
     id: 'Push Docker Image to Repository'
     args: [
       'push',
-      'docker.pkg.dev/tantan-vp-np/tantan-vc-np/opencred:latest'
+      'gcr.us-central1/tantan-vp-np/tantan-vc-np/opencred:latest',
     ]
 
   # Paso 3: Atacar la imagen con Binary Authorization
