@@ -7,7 +7,7 @@ app:
   #express: 
     #httpOnly: true
   server:
-    baseUri: https://auth.tantan.solutions
+    baseUri: https://opencred-585542331364.us-central1.run.app
     #ports:
       #http: 22080
       #https: 22443
